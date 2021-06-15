@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <title>WWW App/ Frama-C</title>
+    <script src="/js/dialogs.js"></script>
+    <script src="/js/tabs.js"></script>
+</head>
+
+<body>
+<!-- Menu bar -->
+    <div class="topnav">
+        <div class="dropdown">
+            <button class="dropbtn">File</button>
+            <div class="dropdown-content">
+                <a href="#">New file</a>
+                <a href="#">New folder</a>
+                <a href="#" id="delete-file">Delete file</a>
+                <a href="#" id="delete-folder">Delete folder</a>
+            </div>
+        </div>
+        <a href="#project">Project</a>
+        <a href="#" id="rerun">Rerun</a>
+        <a href="#analyzes">Analyzes</a>
+        <a href="#help">Help</a>
+        <a class="right-side" style="float: right" href="/logout">Log out</a>
+        <a class="right-side" style="float: right" href="#username"><%= username %></a>
+    </div>
+
+<!-- Content container -->
+<div class="container">
+    <!-- File selection dialog -->
+    <div class="file-dialog">
+        <button class="folder">Folder 1</button>
+        <button class="file">File 1</button>
+        <button class="file">File 2</button>
+        <button class="file">File 3</button>
+        <button class="folder">Folder 2</button>
+        <button class="folder">Folder 3</button>
+    </div>
+
+    <!-- Text field for program code -->
+    <div class="code-dialog">
+            <pre>
+int main() {
+    int i, x, y, wynik = 0;
+
+    x = 10;
+    y = 5;
+
+    for(i = x; i > y; --i) {
+        wynik += i;
+    }
+
+}
+int main() {
+    int i, x, y, wynik = 0;
+
+    x = 10;
+    y = 5;
+
+    for(i = x; i > y; --i) {
+        wynik += i;
+    }
+
+}
+int main() {
+    int i, x, y, wynik = 0;
+
+    x = 10;
+    y = 5;
+
+    for(i = x; i > y; --i) {
+        wynik += i;
+    }
+
+}
+        </pre>
+    </div>
+
+    <!-- Focus on program elements -->
+    <div class="focus-dialog">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla sem non tempor mattis. Nunc id lobortis justo, non pretium purus. Ut hendrerit dui eget elit semper, ac tempor turpis aliquet. Aliquam at lacus ex. Vivamus eu lorem justo. Curabitur
+        sit amet quam condimentum, efficitur dolor a, condimentum nulla. Suspendisse dapibus, eros vel hendrerit ultricies, lectus arcu suscipit risus, aliquam interdum turpis nisl in sapien.
+    </div>
+
+    <!-- Tab container -->
+    <div class="tab-container">
+        <div class="buttons-container">
+            <button class="tab-btn active">Tab1</button>
+            <button class="tab-btn">Tab2</button>
+            <button class="tab-btn">Tab3</button>
+            <button class="tab-btn">Tab4</button>
+        </div>
+        <div class="tab-content">
+            Praesent et nulla tellus. Nunc suscipit nulla quis pellentesque mattis. Maecenas sed risus laoreet, gravida elit sed, elementum tellus.
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

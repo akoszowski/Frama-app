@@ -1,0 +1,213 @@
+/* Global variables */
+
+:root {
+    /* Dark mode colour version */
+    --cmain: #263B57;
+    --caside: #202E41;
+    --ccode-bg: #213135;
+    --coutline: #18282c;
+    --chover: #3E6070;
+    --ctext: #83bdb3;
+    /* Light mode color version */
+    /* --cmain: #89CECD;
+    --caside: #DAE4BF;
+    --ccode-bg: #C2EBDD;
+    --coutline: #F7A979;
+    --chover: #e1eeee;
+    --ctext: #03150E; */
+}
+
+body {
+    margin: 0;
+    font-family: Lucida Grande, Lucida Sans Unicode, Lucida Sans, Geneva, Verdana, sans-serif;
+}
+
+
+/* Top navigation bar styling */
+
+.topnav {
+    overflow: hidden;
+    background-color: var(--cmain);
+    border-bottom: 0.1em solid var(--coutline);
+}
+
+.topnav a {
+    float: left;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--ctext);
+    padding: 0.1em 0.2em;
+}
+
+
+/* Top navigation bar dropdown styling */
+
+.dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+.dropdown .dropbtn {
+    margin: 0;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: var(--ctext);
+    background-color: var(--cmain);
+    padding: 0.1em 0.2em;
+}
+
+.topnav a:hover,
+.dropdown:hover .dropbtn {
+    background-color: var(--chover);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--chover);
+    border-right: 0.1em solid var(--coutline);
+    border-bottom: 0.1em solid var(--coutline);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-content a {
+    float: none;
+    display: block;
+    text-align: left;
+    text-decoration: none;
+    color: var(--ctext);
+    padding: 0.1em 0.2em;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--chover);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
+/* Content seamless rearangement */
+
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 15% 85%;
+        grid-template-rows: 60% 20% 20%;
+        grid-template-areas: "file code" "file focus" "file tab";
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        grid-template-columns: 100%;
+        grid-template-rows: 5% 50% 20% 20%;
+        grid-template-areas: "file" "code" "focus" "tab";
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        grid-template-columns: 15% 50% 35%;
+        grid-template-rows: 70% 30%;
+        grid-template-areas: "file code focus" "file tab tab";
+    }
+}
+
+
+/* Main content container styling */
+
+.container {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    position: fixed;
+    z-index: -1;
+    border-top: 0.1em solid var(--coutline);
+}
+
+.folder,
+.file {
+    border: none;
+    outline: none;
+    display: block;
+    color: var(--ctext);
+    background-color: var(--caside);
+}
+
+.file {
+    border-left: 0.1em solid var(--coutline);
+    margin-left: 1em;
+}
+
+.file-dialog {
+    color: var(--ctext);
+    background-color: var(--caside);
+    overflow: auto;
+    min-height: 15%;
+    border-right: 0.1em solid var(--coutline);
+    padding: 0.7em 0.5em;
+    grid-area: file;
+}
+
+pre {
+    margin: 0;
+}
+
+
+.code-dialog {
+    overflow: auto;
+    color: var(--ctext);
+    background-color: var(--ccode-bg);
+    border-left: 0.1em solid var(--coutline);
+    border-right: 0.1em solid var(--coutline);
+    border-bottom: 0.1em solid var(--coutline);
+    padding: 0.7em 0.5em;
+    grid-area: code;
+}
+
+.focus-dialog {
+    overflow: auto;
+    width: 100%;
+    color: var(--ctext);
+    background-color: var(--caside);
+    border-left: 0.1em solid var(--coutline);
+    border-bottom: 0.1em solid var(--coutline);
+    padding: 0.7em 0.5em;
+    grid-area: focus;
+}
+
+.tab-container {
+    overflow: auto;
+    background-color: var(--ccode-bg);
+    border-top: 0.1em solid var(--coutline);
+    border-left: 0.1em solid var(--coutline);
+    grid-area: tab;
+}
+
+.buttons-container {
+    background-color: var(--cmain);
+    border-bottom: 0.1em solid var(--coutline);
+    padding-top: 0.1em;
+    padding-left: 0.1em;
+}
+
+.tab-btn {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: var(--ctext);
+    background-color: var(--cmain);
+}
+
+.tab-content {
+    font-size: 14px;
+    color: var(--ctext);
+    padding: 0.7em 0.5em;
+}
+
+.active {
+    background-color: var(--ccode-bg);
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Frama App Log In</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+</head>
+<body>
+    <div class="contentclass">
+        <p id="titletop"><b>Frama App</b></p>
+        <p id="texttop">This is the Frama App login page, you need an account in order to enter to the site.
+            If you do not have an account yet you can <a href="/register">register</a> and fill out all your details so we can open new account for you. Once you
+            register and your account is approved you can start chatting in our platform!
+        </p>
+        <div class="formclass">
+            <h1>Log in</h1>
+            <!-- Form submission is automatically handled and sent to the server to the url login which is registered in urls.py and handled in login method in views.py -->
+            <form action="/login" method="POST">
+                <!-- Next line is needed in a form submission for security reasons to avoid that other websites do form submissions to our server: https://docs.djangoproject.com/en/3.1/ref/csrf/  -->
+                <input type="text" name="unameEmail" autocomplete="username" placeholder="Username or email" required>
+                <input type="password" name="password" autocomplete="current-password" placeholder="Password" required>
+                <%_ if(error) { _%>
+                    <p>Wrong username or password</p>
+                <%_ } _%>
+                <button type="submit">Log in</button>
+            </form>
+</body>
+</html>

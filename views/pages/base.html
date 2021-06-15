@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWW App/ Frama-C</title>
+    {% load static %}
+    {#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">#}
+    <link rel="stylesheet" type="text/css" href="{% static 'frama_app/css/style.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js" integrity="sha512-n/4gHW3atM3QqRcbCn6ewmpxcLAHGaDjpEBu4xZd47N0W2oQ+6q7oc3PXstrJYXcbNU1OHdQ1T7pAP+gi5Yu8g==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <script src="{% static 'frama_app/js/dialogs.js' %}"></script>
+    <script src="{% static 'frama_app/js/tabs.js' %}"></script>
+</head>
+
+<body>
+<!-- Menu bar -->
+<div class="topnav">
+    <div class="dropdown">
+        <button class="dropbtn">File</button>
+        <div class="dropdown-content">
+            <a href="{% url 'newfile' %}">New file</a>
+            <a href="{% url 'newdir' %}">New folder</a>
+            <a href="#" id="delete-file">Delete file</a>
+            <a href="#" id="delete-folder">Delete folder</a>
+            {#                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">#}
+                {#                    Launch demo modal#}
+                {#                </button>#}
+        </div>
+    </div>
+    <a href="#project">Project</a>
+    <a href="#" id="rerun">Rerun</a>
+    <a href="#analyzes">Analyzes</a>
+    <a href="#help">Help</a>
+    <a class="right-side" style="float: right" href="{% url 'logoutpage' %}">Log out</a>
+    <a class="right-side" style="float: right" href="#username">{{ username }}</a>
+</div>
+
+
+<!-- Content container -->
+<div class="container">
+    <!-- File selection dialog -->
+    <div class="file-dialog">
+        <div id="file-dialog"></div><br><br>
+        <div id="delete-dialog">
+            <form id="delete-folder-form" style="display: none;">
+                <label for="folder-select">Choose a folder</label>
+                <select id="folder-select" name="folder-select">
+                    <option value="option1">option1</option>
+                </select>
+                <button type="reset" onclick="deleteFolder()">Delete</button>
+            </form>
+
+            <form id="delete-file-form" style="display: none;">
+                <label for="file-select">Choose a file</label>
+                <select id="file-select" name="file-select">
+                    <option value="option1">option1</option>
+                </select>
+                <button type="reset" onclick="deleteFile()">Delete</button>
+            </form>
+        </div>
+        {#            {% for dir in directories %}#}
+        {#                {% if dir.is_available %}#}
+        {#                    <button class="folder">{{ dir.name }}</button>#}
+        {#                    {% for file in files %}#}
+        {#                        {% if file.parent_dir == dir and file.is_available %}#}
+        {#                        <button class="file" onclick=loadFile(file)>{{ file.name }}</button>#}
+        {#                        <button class="file" onclick= location.href="{% url 'showfile' file.name %}">{{ file.name }}</button>#}
+        {#                        {% endif %}#}
+        {#                    {% endfor %}#}
+        {#                {% endif %}#}
+        {#            {% endfor %}#}
+    </div>
+
+    <!-- Text field for program code -->
+    <div class="code-dialog">
+            <pre id="code-dialog-content">
+                {% if cur_file %}
+{{ cur_file.display_code }}
+                {% endif %}
+            </pre>
+    </div>
+
+    <!-- Focus on program elements -->
+    <div class="focus-dialog">
+            <pre id="focus-dialog-loader">
+                {% if cur_file %}
+{{ cur_file.display_focus }}
+                {% endif %}
+            </pre>
+        <div id="focus-dialog-content"></div>
+    </div>
+
+    <!-- Tab container -->
+    <div class="tab-container">
+        <div class="buttons-container">
+            <button class="tab-btn active" id="prover-btn" onclick="activateBtn(this)">PROVERS</button>
+            <button class="tab-btn" id="conditions-btn" onclick="activateBtn(this)">VCs</button>
+            <button class="tab-btn" id="result-btn" onclick="activateBtn(this)">RESULT</button>
+        </div>
+        <div class="tab-content" {% if not cur_file %} style="display: none" {% endif %} >
+            <form id="prover-form">
+                {#                    {% csrf_token %}#}
+                <input type="radio" id="alt-ergo" name="prover" value="Alt-Ergo">
+                <label for="alt-ergo">Alt-Ergo</label><br>
+                <input type="radio" id="z3" name="prover" value="Z3">
+                <label for="z3">Z3</label><br>
+                <input type="radio" id="cvc4" name="prover" value="CVC4">
+                <label for="cvc4">CVC4</label><br><br>
+                <button type="reset" onclick="chooseProver()">Choose prover</button>
+            </form>
+
+            <form id="conditions-form" style="display: none">
+                {#                    {% csrf_token %}#}
+                <input type="checkbox" id="guard" name="guard" value="-wp-rte">
+                <label for="guard">-wp-rte</label><br><br>
+                <input type="radio" id="prop1" name="cond" value="@procedure">
+                <label for="prop1">@procedure</label>
+                <input type="radio" id="prop2" name="cond" value="@property">
+                <label for="prop2">@property</label>
+                <input type="radio" id="prop3" name="cond" value="@lemma">
+                <label for="prop3">@lemma</label>
+                <input type="radio" id="prop4" name="cond" value="@assertion">
+                <label for="prop4">@assertion</label>
+                <input type="radio" id="prop5" name="cond" value="@invariant">
+                <label for="prop5">@invariant</label>
+                <input type="radio" id="prop6" name="cond" value="@precondition">
+                <label for="prop6">@precondition</label>
+                <input type="radio" id="prop7" name="cond" value="@postcondition">
+                <label for="prop7">@postcondition</label>
+                <button type="reset" onclick="chooseConditions()">Choose verify conditions</button><br>
+            </form>
+
+            <pre id="result" style="display: none">
+                    {% if cur_file %}
+{{ cur_file.display_result }}
+                    {% endif %}
+                </pre>
+
+            <div id="rerun-cmd">
+                {% if rerun_cmd %}
+                {{ rerun_cmd}}
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

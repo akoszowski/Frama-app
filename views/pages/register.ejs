@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!-- This is similar to login.html except that the form submission is in a different way. See comments in login.html that explain most of the file-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register to Frama App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js" integrity="sha512-n/4gHW3atM3QqRcbCn6ewmpxcLAHGaDjpEBu4xZd47N0W2oQ+6q7oc3PXstrJYXcbNU1OHdQ1T7pAP+gi5Yu8g==" crossorigin="anonymous"></script>
+    <script src="js/register.js"></script>
+</head>
+<body>
+    <div class="contentclass">
+        <p id="titletop"><b>Registration</b></p>
+        <p id="texttop">Here you can register and create an account in our platform.
+            Please fill out all your details in the form below with the following requirements
+        </p>
+        <ul id="reqList">
+            <li>Provide a <strong>name containing only alphabetic characters</strong></li>
+            <li>Provide a <strong>username of at least three alphanumeric characters</strong></li>
+            <li>Provide a <strong>password of at least six alphanumeric characters that might include any of the following: <i>.,*-+_;:</i></strong></li>
+        </ul>
+        <div class="formclass">
+            <h1>New user</h1>
+            <!-- We submit this form manually through JS because we would like to check first if the passwords match -->
+            <form id="regform" onsubmit="return register()">
+                <input type="text" id="uname" name="uname" autocomplete="username" placeholder="Username" oninput="hideErr()" pattern="[\w]{3,}" required>
+                <input type="email" id="email" name="email" autocomplete="email" placeholder="Email" oninput="hideErr()" required>
+                <input type="password" id="pwd1" name="password" autocomplete="new-password" placeholder="Password" pattern="[A-Za-z0-9.,*-+_;:]{6,}" required>
+                <input type="password" id="pwd2" autocomplete="new-password" placeholder="Retype password" pattern="[A-Za-z0-9.,*-+_;:]{6,}" required>
+                <div id="errorMsg">
+                    We could not do the registration. Username or email are already registered
+                </div>
+                <button id="registerlnk" type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+    <div id="snackbar">
+        Your registraton has been successful!<br>You can now <a id="snackbarlnk" href="/">Login</a>
+    </div>
+</body>
+</html>
