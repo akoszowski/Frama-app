@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <title>WWW App/ Frama-C</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js" integrity="sha512-n/4gHW3atM3QqRcbCn6ewmpxcLAHGaDjpEBu4xZd47N0W2oQ+6q7oc3PXstrJYXcbNU1OHdQ1T7pAP+gi5Yu8g==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
     <script src="/js/dialogs.js"></script>
     <script src="/js/tabs.js"></script>
 </head>
@@ -16,8 +18,8 @@
         <div class="dropdown">
             <button class="dropbtn">File</button>
             <div class="dropdown-content">
-                <a href="#">New file</a>
-                <a href="#">New folder</a>
+                <a href="/new_file">New file</a>
+                <a href="/new_dir">New folder</a>
                 <a href="#" id="delete-file">Delete file</a>
                 <a href="#" id="delete-folder">Delete folder</a>
             </div>
@@ -32,71 +34,89 @@
 
 <!-- Content container -->
 <div class="container">
-    <!-- File selection dialog -->
     <div class="file-dialog">
-        <button class="folder">Folder 1</button>
-        <button class="file">File 1</button>
-        <button class="file">File 2</button>
-        <button class="file">File 3</button>
-        <button class="folder">Folder 2</button>
-        <button class="folder">Folder 3</button>
+        <div id="file-dialog"></div><br><br>
+        <div id="delete-dialog">
+            <form id="delete-folder-form" style="display: none;">
+                <label for="folder-select">Choose a folder</label>
+                <select id="folder-select" name="folder-select">
+                    <option value="option1">option1</option>
+                </select>
+                <button type="reset" onclick="deleteFolder()">Delete</button>
+            </form>
+
+            <form id="delete-file-form" style="display: none;">
+                <label for="file-select">Choose a file</label>
+                <select id="file-select" name="file-select">
+                    <option value="option1">option1</option>
+                </select>
+                <button type="reset" onclick="deleteFile()">Delete</button>
+            </form>
+        </div>
     </div>
 
     <!-- Text field for program code -->
     <div class="code-dialog">
-            <pre>
-int main() {
-    int i, x, y, wynik = 0;
+        <pre id="code-dialog-content">
 
-    x = 10;
-    y = 5;
-
-    for(i = x; i > y; --i) {
-        wynik += i;
-    }
-
-}
-int main() {
-    int i, x, y, wynik = 0;
-
-    x = 10;
-    y = 5;
-
-    for(i = x; i > y; --i) {
-        wynik += i;
-    }
-
-}
-int main() {
-    int i, x, y, wynik = 0;
-
-    x = 10;
-    y = 5;
-
-    for(i = x; i > y; --i) {
-        wynik += i;
-    }
-
-}
         </pre>
     </div>
 
     <!-- Focus on program elements -->
     <div class="focus-dialog">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla sem non tempor mattis. Nunc id lobortis justo, non pretium purus. Ut hendrerit dui eget elit semper, ac tempor turpis aliquet. Aliquam at lacus ex. Vivamus eu lorem justo. Curabitur
-        sit amet quam condimentum, efficitur dolor a, condimentum nulla. Suspendisse dapibus, eros vel hendrerit ultricies, lectus arcu suscipit risus, aliquam interdum turpis nisl in sapien.
+        <pre id="focus-dialog-loader">
+
+        </pre>
+        <div id="focus-dialog-content"></div>
     </div>
 
     <!-- Tab container -->
     <div class="tab-container">
         <div class="buttons-container">
-            <button class="tab-btn active">Tab1</button>
-            <button class="tab-btn">Tab2</button>
-            <button class="tab-btn">Tab3</button>
-            <button class="tab-btn">Tab4</button>
+            <button class="tab-btn active" id="prover-btn" onclick="activateBtn(this)">PROVERS</button>
+            <button class="tab-btn" id="conditions-btn" onclick="activateBtn(this)">VCs</button>
+            <button class="tab-btn" id="result-btn" onclick="activateBtn(this)">RESULT</button>
         </div>
-        <div class="tab-content">
-            Praesent et nulla tellus. Nunc suscipit nulla quis pellentesque mattis. Maecenas sed risus laoreet, gravida elit sed, elementum tellus.
+        <!-- FIXME -->
+        <div class="tab-content" style="display: none"> 
+            <form id="prover-form">
+                <input type="radio" id="alt-ergo" name="prover" value="Alt-Ergo">
+                <label for="alt-ergo">Alt-Ergo</label><br>
+                <input type="radio" id="z3" name="prover" value="Z3">
+                <label for="z3">Z3</label><br>
+                <input type="radio" id="cvc4" name="prover" value="CVC4">
+                <label for="cvc4">CVC4</label><br><br>
+                <button type="reset" onclick="chooseProver()">Choose prover</button>
+            </form>
+
+            <form id="conditions-form" style="display: none">
+                <input type="checkbox" id="guard" name="guard" value="-wp-rte">
+                <label for="guard">-wp-rte</label><br><br>
+                <input type="radio" id="prop1" name="cond" value="@procedure">
+                <label for="prop1">@procedure</label>
+                <input type="radio" id="prop2" name="cond" value="@property">
+                <label for="prop2">@property</label>
+                <input type="radio" id="prop3" name="cond" value="@lemma">
+                <label for="prop3">@lemma</label>
+                <input type="radio" id="prop4" name="cond" value="@assertion">
+                <label for="prop4">@assertion</label>
+                <input type="radio" id="prop5" name="cond" value="@invariant">
+                <label for="prop5">@invariant</label>
+                <input type="radio" id="prop6" name="cond" value="@precondition">
+                <label for="prop6">@precondition</label>
+                <input type="radio" id="prop7" name="cond" value="@postcondition">
+                <label for="prop7">@postcondition</label>
+                <button type="reset" onclick="chooseConditions()">Choose verify conditions</button><br>
+            </form>
+
+            <pre id="result" style="display: none">
+
+            </pre>
+
+            <div id="rerun-cmd">
+
+            </div>
+
         </div>
     </div>
 </div>

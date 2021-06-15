@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWW App/ Add dir</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1>Frama app add new directory</h1>
+
+    <form action="/new_dir" method="post">
+        <input type="text" name="name" placeholder="Folder name" required>
+        <input type="text" name="description" placeholder="Optional description">
+        <input type="submit" value="Add directory">
+    </form>
+    <%_ if(error) { _%>
+        <p> Folder with given name already exists!</p>
+    <%_ } _%> 
+</body>

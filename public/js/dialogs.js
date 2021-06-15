@@ -41,7 +41,7 @@ async function displayFileDialog() {
         url: 'user_dirs',
         data: {},
         success: data => {
-            directories = JSON.parse(data)
+            directories = data;
         },
         error: err => {
             alert("Error fetching data!");
@@ -55,7 +55,7 @@ async function displayFileDialog() {
         url: 'user_files',
         data: {},
         success: data => {
-            files = JSON.parse(data);
+            files = data;
         },
         error: err => {
             alert("Error fetching data!");
@@ -73,17 +73,18 @@ async function displayFileDialog() {
 
     console.log("Generujemy btns");
     directories.map(dir => {
-        if (dir.fields.is_available) {
+        console.log(dir);
+        if (dir.is_available) {
             var folderBtn = document.createElement("button");
             folderBtn.className = "folder";
-            folderBtn.innerText = dir.fields.name;
+            folderBtn.innerText = dir.name;
             dialog.appendChild(folderBtn);
             files.map(file => {
-                console.log(file.fields.parent_dir);
-                if (file.fields.is_available && file.fields.parent_dir == dir.pk) {
+                console.log(file.name, file.parent_dir_id);
+                if (file.is_available && file.parent_dir_id == dir.directory_id) {
                     var fileBtn = document.createElement("button");
                     fileBtn.className = "file";
-                    fileBtn.innerText = file.fields.name;
+                    fileBtn.innerText = file.name;
                     fileBtn.addEventListener("click", function (e) { loadFile(e) });
                     dialog.appendChild(fileBtn);
                 }
@@ -108,92 +109,104 @@ async function loadContent(path, holdername) {
 }
 
 
-// async function loadFocusContent(path) {
-//     if (path.length > 1) {
-//         clearContent("focus-dialog-content");
-//         jQuery.get(path, function (data) {
-//             const dialog = document.getElementById("focus-dialog-content");
+async function loadFocusContent(path) {
+    if (path.length > 1) {
+        clearContent("focus-dialog-content");
+        jQuery.get(path, function (data) {
+            const dialog = document.getElementById("focus-dialog-content");
 
-//             console.log(data);
+            console.log(data);
 
-//             clearContent("focus-dialog-loader");
+            clearContent("focus-dialog-loader");
 
-//             const arr = data.split("------------------------------------------------------------")
-//             let goals = 0;
-//             arr.map((str, arrIndex) => {
-//                 if (str.search("Goal") >= 0) {
-//                     goals++;
-//                     var btn = document.createElement("button");
-//                     btn.innerText = "+";
-//                     // btn.style.display = "block";
-//                     btn.addEventListener("click", function () {
-//                         var panel = this.nextElementSibling;
-//                         var header = panel.nextElementSibling;
-//                         if (panel.style.display === "block") {
-//                             this.innerText = "+";
-//                             panel.style.display = "none";
-//                             header.style.display = "block";
-//                         } else {
-//                             this.innerText = "-";
-//                             panel.style.display = "block";
-//                             header.style.display = "none";
-//                         }
-//                     });
-//                     if (str.search("Prove: true") >= 0) {
-//                         btn.title = "valid"
-//                     } else if (str.search("Prove: false") >= 0) {
-//                         btn.title = "invalid";
-//                     } else {
-//                         btn.title = "unknown";
-//                     }
-//                     dialog.appendChild(btn);
+            const arr = data.split("------------------------------------------------------------")
+            let goals = 0;
+            arr.map((str, arrIndex) => {
+                if (str.search("Goal") >= 0) {
+                    goals++;
+                    var btn = document.createElement("button");
+                    btn.innerText = "+";
+                    // btn.style.display = "block";
+                    btn.addEventListener("click", function () {
+                        var panel = this.nextElementSibling;
+                        var header = panel.nextElementSibling;
+                        if (panel.style.display === "block") {
+                            this.innerText = "+";
+                            panel.style.display = "none";
+                            header.style.display = "block";
+                        } else {
+                            this.innerText = "-";
+                            panel.style.display = "block";
+                            header.style.display = "none";
+                        }
+                    });
+                    if (str.search("Prove: true") >= 0) {
+                        btn.title = "valid"
+                    } else if (str.search("Prove: false") >= 0) {
+                        btn.title = "invalid";
+                    } else {
+                        btn.title = "unknown";
+                    }
+                    dialog.appendChild(btn);
 
-//                     var panel = document.createElement("pre");
-//                     panel.innerText = str;
-//                     panel.style.display = "none";
-//                     dialog.appendChild(panel);
+                    var panel = document.createElement("pre");
+                    panel.innerText = str;
+                    panel.style.display = "none";
+                    dialog.appendChild(panel);
 
-//                     console.log("Splitujemy")
-//                     console.log(str.split('\n'));
-//                     var header = document.createElement("div")
-//                     header.innerText = str.split('\n')[2];
-//                     header.style.display = "block";
-//                     dialog.appendChild(header);
-//                 }
-//             })
-//         })
-//     }
-// }
+                    console.log("Splitujemy")
+                    console.log(str.split('\n'));
+                    var header = document.createElement("div")
+                    header.innerText = str.split('\n')[2];
+                    header.style.display = "block";
+                    dialog.appendChild(header);
+                }
+            })
+        })
+    }
+}
 
-// async function loadFile(e) {
-//     curFile = e.target.innerText;
+function getParentDir(file) {
+    let cand = file.previousSibling;
 
-//     const Fileform = document.getElementById("delete-file-form");
-//     const Folderform = document.getElementById("delete-folder-form");
+    while(cand.className != "folder") {
+        cand = cand.previousSibling;
+    }
 
-//     Fileform.style.display = "none";
-//     Folderform.style.display = "none";
+    return cand.innerText;
+}
 
-//     document.getElementById("rerun-cmd").innerText = '';
+async function loadFile(e) {
+    curFile = e.target.innerText;
+    let parentDir = getParentDir(e.target);
+    console.log(parentDir);
 
-//     const codeDialogContent = document.getElementById("code-dialog-content");
-//     const resultTabContent = document.getElementById("result");
-//     const focusDialogContent = document.getElementById("focus-dialog-loader");
+    const Fileform = document.getElementById("delete-file-form");
+    const Folderform = document.getElementById("delete-folder-form");
 
-//     codeDialogContent.innerText = "Loading code dialog ...";
-//     resultTabContent.innerText = "Loading result tab ...";
-//     focusDialogContent.innerText = "Loading focus dialog ..."
+    Fileform.style.display = "none";
+    Folderform.style.display = "none";
 
-//     const codeUrlPath = "showfile/" + curFile;
-//     await loadContent(codeUrlPath, "code-dialog-content");
+    document.getElementById("rerun-cmd").innerText = '';
 
-//     const tabsUrlPath = "showresult/" + curFile;
-//     await loadContent(tabsUrlPath, "result");
-//     displayTabs();
+    const codeDialogContent = document.getElementById("code-dialog-content");
+    const resultTabContent = document.getElementById("result");
+    const focusDialogContent = document.getElementById("focus-dialog-loader");
 
-//     const focusUrlPath = "showfocus/" + curFile;
-//     await loadFocusContent(focusUrlPath);
-// }
+    codeDialogContent.innerText = "Loading code dialog ...";
+    resultTabContent.innerText = "Loading result tab ...";
+    focusDialogContent.innerText = "Loading focus dialog ..."
+
+    const codeUrlPath = "show_file/" + parentDir + "/" + curFile;
+    await loadContent(codeUrlPath, "code-dialog-content");
+
+    const tabsUrlPath = "show_result/" + parentDir + "/" + curFile;
+    await loadContent(tabsUrlPath, "result");
+    displayTabs();
+
+    const focusUrlPath = "show_focus/" + parentDir + "/" + curFile;
+    await loadFocusContent(focusUrlPath);
+}
 
 // function chooseProver() {
 //     const arr = $("#prover-form").serializeArray();
