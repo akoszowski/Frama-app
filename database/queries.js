@@ -30,10 +30,25 @@ class Queries {
     }
 
     static async newFile(name, description, owner, parent_dir) {
-        let parent_dir_id = await (await db.query('SELECT directory_id FROM directories WHERE name = $1 AND owner = $2', [parent_dir, owner])).rows[0].directory_id;
+        let parent_dir_id = (await db.query('SELECT directory_id FROM directories WHERE name = $1 AND owner = $2', [parent_dir, owner])).rows[0].directory_id;
         console.log(parent_dir, parent_dir_id);
         let vals = [name, description, owner, parent_dir_id];
         let res = await db.query('INSERT INTO files(name, description, owner, parent_dir_id) VALUES($1, $2, $3, $4) RETURNING file_id', vals);
+        return res;
+    }
+
+    static async delFile(name, owner, parent_dir) {
+        console.log(name, owner, parent_dir);
+        let parent_dir_id = (await db.query('SELECT directory_id FROM directories WHERE name = $1 AND owner = $2', [parent_dir, owner])).rows[0].directory_id;
+
+        console.log(parent_dir, parent_dir_id);
+        let vals = [name, owner, parent_dir_id];
+        let res = await db.query('UPDATE files SET is_available = false WHERE name = $1 AND owner = $2 AND parent_dir_id = $3', vals);
+        return res;
+    }
+
+    static async delFolder(name, owner) {
+        let res = await db.query('UPDATE directories SET is_available = false WHERE name = $1 AND owner = $2', [name, owner]);
         return res;
     }
 }

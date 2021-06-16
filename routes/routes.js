@@ -25,4 +25,9 @@ router.post('/new_file', controllers.newFile);
 router.get('/show_file/:folderName/:fileName', controllers.showFile);
 router.get('/show_result/:folderName/:fileName', controllers.showResult);
 router.get('/show_focus/:folderName/:fileName', controllers.showFocus);
+
+router.post('/delete_file', controllers.delFile);
+router.post('/delete_folder', controllers.delFolder);
+router.post('/rerun', controllers.rerun);
+
 module.exports = router;

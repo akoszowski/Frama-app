@@ -17,7 +17,9 @@
         <label for="add-folder-select">Choose a folder</label>
         <select id="add-folder-select" name="parent_dir">
         <% for (let i = 0; i < dirs.length; ++i) { %>
-            <option value=<%= dirs[i].name %>><%= dirs[i].name %>  </option>
+            <% if(dirs[i].is_available) { %> 
+                <option value=<%= dirs[i].name %>><%= dirs[i].name %>  </option>
+            <% } %> 
         <% } %> 
         </select>
         <input type="file" name="file" accept=".c" required>

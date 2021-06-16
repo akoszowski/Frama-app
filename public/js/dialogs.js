@@ -15,9 +15,9 @@ window.onload = () => {
     displayFileDialog();
     displayTabs();
 
-    // $('#rerun').click(function () { rerun(); return false; });
-    // $('#delete-file').click(function () { displayFileDelForm(); return false; });
-    // $('#delete-folder').click(function () { displayFolderDelForm(); return false; });
+    $('#rerun').click(function () { rerun(); return false; });
+    $('#delete-file').click(function () { displayFileDelForm(); return false; });
+    $('#delete-folder').click(function () { displayFolderDelForm(); return false; });
 }
 
 
@@ -208,143 +208,148 @@ async function loadFile(e) {
     await loadFocusContent(focusUrlPath);
 }
 
-// function chooseProver() {
-//     const arr = $("#prover-form").serializeArray();
-//     if (arr.length > 0) {
-//         prover = arr[0].value;
-//         console.log(prover);
-//     }
-// }
+function chooseProver() {
+    const arr = $("#prover-form").serializeArray();
+    if (arr.length > 0) {
+        prover = arr[0].value;
+        console.log(prover);
+    }
+}
 
-// function chooseConditions() {
-//     const arr = $("#conditions-form").serializeArray();
+function chooseConditions() {
+    const arr = $("#conditions-form").serializeArray();
 
-//     arr.map(field => {
-//         if (field.name === "guard") {
-//             guard = field.value;
-//         } else if (field.name === "cond") {
-//             conditions += field.value;
-//         }
-//     })
+    arr.map(field => {
+        if (field.name === "guard") {
+            guard = field.value;
+        } else if (field.name === "cond") {
+            conditions += field.value;
+        }
+    })
 
-//     console.log(guard + " " + conditions)
-// }
+    console.log(guard + " " + conditions)
+}
 
-// async function rerun() {
-//     console.log("Rerun fired!")
-//     if (!prover || !conditions) {
-//         alert("No prover or verify condition choosen!")
-//     } else {
-//         await $.ajax({
-//             type: 'GET',
-//             url: 'rerun',
-//             data: { 'prover': prover, 'guard': guard, 'conditions': conditions },
-//             success: res => {
-//                 console.log(res['rerun_cmd']);
-//                 document.getElementById("rerun-cmd").innerText = res['rerun_cmd'];
-//             },
-//             error: err => {
-//                 console.log("Error in rerun!");
-//                 console.log("GET rerun: ", err.statusText);
-//             }
-//         });
-//     }
-// }
+async function rerun() {
+    console.log("Rerun fired!")
+    if (!prover || !conditions) {
+        alert("No prover or verify condition choosen!")
+    } else {
+        await $.ajax({
+            type: 'POST',
+            url: 'rerun',
+            data: { 'prover': prover, 'guard': guard, 'conditions': conditions },
+            success: res => {
+                console.log(res['rerun_cmd']);
+                document.getElementById("rerun-cmd").innerText = res['rerun_cmd'];
+            },
+            error: err => {
+                console.log("Error in rerun!");
+                console.log("GET rerun: ", err.statusText);
+            }
+        });
+    }
+}
 
 
-// function displayFileDelForm() {
-//     console.log("Delete file");
+function displayFileDelForm() {
+    console.log("Delete file");
 
-//     clearContent("file-select");
+    clearContent("file-select");
 
-//     const Fileform = document.getElementById("delete-file-form");
-//     const Folderform = document.getElementById("delete-folder-form");
+    const Fileform = document.getElementById("delete-file-form");
+    const Folderform = document.getElementById("delete-folder-form");
 
-//     Folderform.style.display = "none";
+    Folderform.style.display = "none";
 
-//     const select = document.getElementById("file-select")
+    const fileSelect = document.getElementById("file-select")
 
-//     directories.map(dir => {
-//         if (dir.fields.is_available) {
-//             files.map(file => {
-//                 if (file.fields.is_available && file.fields.parent_dir == dir.pk) {
-//                     var newOption = document.createElement("option");
-//                     newOption.value = file.fields.name;
-//                     newOption.innerHTML = file.fields.name;
-//                     select.appendChild(newOption);
-//                 }
-//             });
-//         }
-//     });
+    directories.map(dir => {
+        if (dir.is_available) {
+            files.map(file => {
+                if (file.is_available && file.parent_dir_id == dir.directory_id) {
+                    var fileOption = document.createElement("option");
+                    fileOption.value = dir.name + '/' + file.name;   
+                    fileOption.innerHTML = dir.name + '/' +file.name;
+                    fileSelect.appendChild(fileOption);
+                }
+            });
+        }
+    });
 
-//     Fileform.style.display = "block";
+    Fileform.style.display = "block";
 
-// }
+}
 
-// function displayFolderDelForm() {
-//     console.log("Delete folder")
+function displayFolderDelForm() {
+    console.log("Delete folder")
 
-//     clearContent("folder-select")
+    clearContent("folder-select")
 
-//     const Fileform = document.getElementById("delete-file-form");
-//     const Folderform = document.getElementById("delete-folder-form");
+    const Fileform = document.getElementById("delete-file-form");
+    const Folderform = document.getElementById("delete-folder-form");
 
-//     Fileform.style.display = "none";
+    Fileform.style.display = "none";
 
-//     const select = document.getElementById("folder-select")
+    const select = document.getElementById("folder-select")
 
-//     directories.map(dir => {
-//         if (dir.fields.is_available) {
-//             var newOption = document.createElement("option");
-//             newOption.value = dir.fields.name;
-//             newOption.innerHTML = dir.fields.name;
-//             select.appendChild(newOption);
-//         }
-//     });
+    directories.map(dir => {
+        if (dir.is_available) {
+            var newOption = document.createElement("option");
+            newOption.value = dir.name;
+            newOption.innerHTML = dir.name;
+            select.appendChild(newOption);
+        }
+    });
 
-//     Folderform.style.display = "block";
-// }
+    Folderform.style.display = "block";
+}
 
-// async function deleteFile() {
-//     const arr = $("#delete-file-form").serializeArray();
-//     if (arr.length > 0) {
-//         console.log(arr[0].value);
+async function deleteFile() {
+    const arr = $("#delete-file-form").serializeArray();
+    if (arr.length > 0) {
+        console.log(arr[0].value);
 
-//         await $.ajax({
-//             type: 'GET',
-//             url: 'deletefile',
-//             data: { 'name': arr[0].value },
-//             success: res => {
-//                 console.log(res);
-//             },
-//             error: err => {
-//                 console.log("Error in deleteFile!");
-//                 console.log("GET rerun: ", err.statusText);
-//             }
-//         });
+        let names = arr[0].value.split("/");
+        const parentDirName = names[0];
+        const fileName = names[1];
 
-//         displayFileDialog();
-//     }
-// }
 
-// async function deleteFolder() {
-//     const arr = $("#delete-folder-form").serializeArray();
-//     if (arr.length > 0) {
-//         console.log(arr[0].value);
+        await $.ajax({
+            type: 'POST',
+            url: 'delete_file',
+            data: { "parentDirName": parentDirName, "fileName": fileName },
+            success: res => {
+                console.log(res);
+            },
+            error: err => {
+                console.log("Error in deleteFile!");
+                console.log("GET rerun: ", err.statusText);
+            }
+        });
 
-//         await $.ajax({
-//             type: 'GET',
-//             url: 'deletedir',
-//             data: { 'name': arr[0].value },
-//             success: res => {
-//                 console.log(res);
-//             },
-//             error: err => {
-//                 console.log("Error in deleteFolder!");
-//                 console.log("GET rerun: ", err.statusText);
-//             }
-//         });
+        displayFileDialog();
+    }
+}
 
-//         displayFileDialog();
-//     }
-// }
+async function deleteFolder() {
+    const arr = $("#delete-folder-form").serializeArray();
+    if (arr.length > 0) {
+        console.log(arr[0].value);
+
+        await $.ajax({
+            type: 'POST',
+            url: 'delete_folder',
+            data: { 'fileName': arr[0].value },
+            success: res => {
+                console.log(res);
+            },
+            error: err => {
+                console.log("Error in deleteFolder!");
+                console.log("GET rerun: ", err.statusText);
+            }
+        });
+
+        displayFileDialog();
+    }
+}

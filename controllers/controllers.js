@@ -174,6 +174,8 @@ const newFile = (req, res) => {
 const showFile = (req, res) => {
     let filePath = `./uploads/${req.session.username}/${req.params.folderName}/${req.params.fileName}`;
     
+    req.session.curFile = req.params.fileName;
+
     fs.readFile(filePath, 'utf8', function(err, data) {
         if (err) {
             res.send(err);
@@ -208,6 +210,42 @@ const showFocus = (req, res) => {
     res.send(data);
 };
 
+const delFile = (req, res) => {
+    console.log(req.body);
+
+    Queries.delFile(req.body.fileName, req.session.username, req.body.parentDirName).then(() => {
+        console.log("File deleted successfully!");
+        res.status(200).send({msg: "File deleted"});
+    }).catch(err => {
+        console.log(err);
+        res.status(400).send({msg: "File delete error"});
+    });
+};
+
+const delFolder = (req, res) => {
+    console.log(req.body);
+
+    Queries.delFolder(req.body.fileName, req.session.username).then(() => {
+        console.log("Folder deleted successfully!");
+        res.status(200).send({msg: "Folder deleted"});
+    }).catch(err => {
+        console.log(err);
+        res.status(400).send({msg: "Folder delete error"});
+    });
+};
+
+const rerun = (req, res) => {
+    console.log(req.body);
+
+    if(req.body.guard) {
+        req.session.rerunCmd = `frama-c -wp -wp-prover ${req.body.prover} -wp-prop="-${req.body.conditions}" ${req.body.guard} ${req.session.curFile}`
+    } else {
+        req.session.rerunCmd = `frama-c -wp -wp-prover ${req.body.prover} -wp-prop="-${req.body.conditions}" ${req.session.curFile}`
+    }
+
+    res.status(200).send({rerun_cmd: req.session.rerunCmd});
+}
+
 module.exports.home = home;
 module.exports.registerPage = registerPage;
 module.exports.register = register;
@@ -226,3 +264,7 @@ module.exports.newFile = newFile;
 module.exports.showFile = showFile;
 module.exports.showResult = showResult;
 module.exports.showFocus = showFocus;
+
+module.exports.delFile = delFile;
+module.exports.delFolder = delFolder;
+module.exports.rerun = rerun;
