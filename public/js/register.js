@@ -39,7 +39,8 @@ function register() {
                 //we read the response and take the proper action
                 var obj = JSON.parse(xhr.response)
                 if (obj.registered) { // user created
-                    document.getElementById("snackbar").className = "show"
+
+                    document.getElementById("snackbar").style.display = "block";
                     document.getElementById('regform').reset()
                 } else { // user not created
                     document.getElementById("errorMsg").style.display = "block"

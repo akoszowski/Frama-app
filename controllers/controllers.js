@@ -2,7 +2,7 @@ const Queries = require('../database/queries');
 
 const multer = require('multer');
 
-const { exec, execSync, sp } = require('child_process');
+const { exec, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const { stdout } = require('process');
